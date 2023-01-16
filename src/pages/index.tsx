@@ -2,16 +2,40 @@ import Head from 'next/head';
 import Tabs from '~/modules/home/components/Tabs';
 import styled from 'styled-components';
 import { DummyFeedList } from '~/modules/home/utils';
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import TravelPostCard from '~/components/TravelPostCard';
 import AddIcon from '@mui/icons-material/Add';
-import {useRouter}  from "next/router";
+import { useRouter } from 'next/router';
 import { BottomDrawer } from '~/components/BottomDrawer';
 import CreatePost from '~/modules/home/components/CreatePost';
+import UseDeviceWidth from '~/hooks/use-device-width';
+import { Modal, useModal } from '@nextui-org/react';
 
 export default function Home() {
-  const router = useRouter();
-  const [openBottomDrawer, setOpenBottomDrawer] = useState<boolean>(false);
+	const router = useRouter();
+	const [openBottomDrawer, setOpenBottomDrawer] = useState<boolean>(false);
+	const [isMobile, setIsMobile] = useState(true);
+	const { setVisible, bindings } = useModal();
+
+	const handleCreatePost = (open: boolean) => {
+       if(open){
+            isMobile ? setOpenBottomDrawer(true) : setVisible(true);
+        } else {
+            isMobile ? setOpenBottomDrawer(false) : setVisible(false);
+        }
+    };
+
+	useEffect(() => {
+		if (
+			/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+				navigator.userAgent
+			)
+		) {
+			setIsMobile(true);
+		} else {
+			setIsMobile(false);
+		}
+	}, []);
 
 	return (
 		<>
@@ -32,12 +56,25 @@ export default function Home() {
 						</Fragment>
 					))}
 				</div>
-        <div className='add' onClick={() => setOpenBottomDrawer(true)}>
-            <AddIcon />
-        </div>
-        <BottomDrawer id='post-drawer' open={openBottomDrawer}>
-            <CreatePost closeDrawer={() => setOpenBottomDrawer(false)}/>
-        </BottomDrawer>
+				<div className='add' onClick={() => handleCreatePost(true)}>
+					<AddIcon />
+				</div>
+
+				<Modal
+					scroll
+					width='600px'
+					aria-labelledby='modal-title'
+					aria-describedby='modal-description'
+					{...bindings}
+				>
+					<Modal.Body>
+						<CreatePost closeDrawer={() => handleCreatePost(false)} />
+					</Modal.Body>
+				</Modal>
+
+				<BottomDrawer id='post-drawer' open={openBottomDrawer}>
+					<CreatePost closeDrawer={() =>  handleCreatePost(false)} />
+				</BottomDrawer>
 			</Parent>
 		</>
 	);
@@ -63,17 +100,17 @@ const Parent = styled.div`
 		margin: 0 auto;
 		top: 0;
 	}
-  .add {
-    position: fixed;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    height: 60px;
-    width: 60px;
-    background: #42C2FF;
-    bottom: 2%;
-    right: 5%;
-    z-index: 1000;
-  }
+	.add {
+		position: fixed;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 50%;
+		height: 60px;
+		width: 60px;
+		background: #42c2ff;
+		bottom: 2%;
+		right: 5%;
+		z-index: 1000;
+	}
 `;

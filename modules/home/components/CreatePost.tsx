@@ -82,7 +82,7 @@ const Parent = styled.div`
 	display: flex;
 	flex-direction: column;
 	height: 100%;
-	padding: 20px;
+	padding: 20px 20px 50px;
 	gap: 40px;
 	text-field {
 		font-size: 40px;

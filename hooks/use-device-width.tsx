@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 
 
 const UseDeviceWidth = () => {
-    const [windowWidth, setWindowWidth] = useState(850);
+    const [windowWidth, setWindowWidth] = useState({width: 850, height: 850});
     useEffect(() => {
         const getWindowWidth = () => {
             const { innerWidth: width, innerHeight: height } = window;
